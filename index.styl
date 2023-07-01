@@ -1,0 +1,165 @@
+@font-face
+	font-family "Press Start 2P"
+	src url("https://cdn.jsdelivr.net/gh/tiencoffee/fonts/FVF Fernando.ttf")
+
+body
+	overflow hidden
+	image-rendering pixelated
+	user-select none
+	-webkit-user-drag none
+	user-drag none
+
+input
+	&:not([type])
+	&[type=""]
+	&[type="text"]
+	&[type="password"]
+	&[type="number"]
+	&[type="email"]
+	&[type="search"]
+	&[type="tel"]
+		cursor url("asset/cursor/text.png") 16 16, text
+
+:focus
+	outline 0
+.dom
+	transform translateX(0)
+.overlay
+	pointer-events none !important
+	> *
+		pointer-events all
+.logo
+	font-size 3rem
+.message-text
+	height 52px
+
+.nes-input
+.nes-select select
+	height 3rem
+	padding 0 1rem
+	line-height normal
+.dialog-menu
+	margin-top 1rem
+	text-align right
+	> .nes-btn:not(:first-child)
+		margin-left 1rem
+.is-dark
+	.nes-btn:not([class*=is-])
+		color #212529
+.nes-dialog
+	&:after
+		content ""
+		position fixed
+		left 0
+		top 0
+		right 0
+		bottom 0
+		background #000a
+		z-index -2
+
+.d-full
+	position absolute
+	left 0
+	top 0
+	width 100%
+	height 100%
+.d-flex
+	display flex
+	&.column
+		flex-direction column
+	&.start
+		justify-content flex-start
+	&.center
+		justify-content center
+	&.between
+		justify-content space-between
+	&.around
+		justify-content space-around
+	&.evenly
+		justify-content space-evenly
+	&.end
+		justify-content flex-end
+	&.top
+		align-items flex-start
+	&.middle
+		align-items center
+	&.bottom
+		align-items flex-end
+
+.events-none
+	pointer-events none
+.events-all
+	pointer-events all
+.visible
+	visibility visible
+.hidden
+	visibility hidden
+.nowrap
+	white-space nowrap
+
+for ver, i in top "" bottom
+	for hor, j in left "" right
+		.d-{ver + hor or "middle"}
+			position absolute
+			if hor is right
+				right 0
+			else
+				left j * 50%
+			if ver is bottom
+				bottom 0
+			else
+				top i * 50%
+			if !hor and !ver
+				transform translate(-50%, -50%)
+			else if !hor
+				transform translateX(-50%)
+			else if !ver
+				transform translateY(-50%)
+
+for i in 0..8
+	val = i / 8 * 100%
+	.w-{i}
+		width val
+	.h-{i}
+		height val
+
+for i in 0..5
+	.z-{i}
+		z-index i
+	if i
+		.-z-{i}
+			z-index -i
+
+props = {
+	m: margin
+	p: padding
+}
+sides = {
+	"": ""
+	x: 0
+	y: 0
+	l: -left
+	t: -top
+	r: -right
+	b: -bottom
+}
+for i, prop in props
+	start = i is "m" ? -5 : 0
+	for j, side in sides
+		for k in start..5
+			val = (k)rem !important
+			sign = k < 0 ? "-" : ""
+			kk = abs(k)
+			.{sign}{i}{j}-{kk}
+				if j is "x"
+					{prop}-left val
+					{prop}-right val
+				else if j is "y"
+					{prop}-top val
+					{prop}-bottom val
+				else
+					{prop}{side} val
+
+for hor in left center right
+	.text-{hor}
+		text-align hor

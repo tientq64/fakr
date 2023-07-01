@@ -1,0 +1,74 @@
+#app(v-cloak)
+	canvas(ref="canvas")
+	.d-full.overlay.dom(v-if="game" :style="styleDom")
+		.d-full.text-center.nes-text.is-disabled(v-if="state == 'load'")
+			.d-middle
+				p.nes-text.is-warning {{randomTips}}
+			.d-bottom.w-6.mb-1
+				p Đang tải: {{~~(game.load.progress * 100)}}%
+				progress.nes-progress.is-primary(:value="game.load.progress")
+		.d-full.text-center.nes-text.is-disabled(v-else-if="state == 'login'")
+			.d-middle
+				b.nes-text.is-primary.logo {{game.game.config.gameTitle}}
+				span.nes-text.is-warning.ml-1 {{game.game.config.gameVersion}}
+				.nes-container.with-title.is-centered.is-dark.mt-5
+					p.title Đăng nhập với
+					i.nes-icon.google.is-large.nes-pointer.mt-1(@click="loginWithGoogle")
+		.d-full.overlay(v-else)
+			.d-right.text-right.d-flex.column
+				button.nes-btn(@click="showDialog('profile')") Bản thân
+				button.nes-btn.mt-1(@click="showDialog('setting')") Cài đặt
+			.d-full.d-flex.center.middle.overlay.z-1
+				dialog.nes-dialog.is-dark#profile
+					form(@submit.prevent)
+						h3.title.mb-2 Bản thân
+						.dialog-menu
+							button.nes-btn(@click="closeDialog") Đóng
+				dialog.nes-dialog.is-dark#setting
+					form(@submit.prevent)
+						h3.title.mb-2 Cài đặt
+						p Phím bấm
+						.d-flex.middle(
+							v-for="key in config.keys"
+							:key="key"
+						)
+							label.w-4 {{key.label}}
+							input.nes-input.w-4(
+								@keydown.prevent="key.code = $event.code"
+								:value="key.code"
+							)
+						.dialog-menu
+							button.nes-btn(@click="closeDialog") Đóng
+			.d-bottom.w-6.mb-1(v-if="message.list[0]")
+				.nes-container.with-title.is-dark
+					p.title
+						| {{message.list[0].title}}
+						| [{{message.list[0].index}} / {{message.list[0].total}}]
+					p.message-text.nes-text.is-warning {{message.words.join(" ")}}
+		.d-full.hidden.events-none
+			.d-bottom.w-6.mb-1
+				.nes-container.is-dark
+					p(ref="measureText")
+		.d-full.d-flex.center.middle.z-1(v-if="dialogs.length")
+			dialog.nes-dialog.is-dark(v-for="dialog in dialogs" :key="dialog" open)
+				form(@submit.prevent="dialog.resolve")
+					p {{dialog.text}}
+					input.nes-input(
+						v-if="dialog.type == 'prompt'"
+						:type="dialog.input.type"
+						:maxlength="dialog.input.maxlength"
+						:minlength="dialog.input.minlength"
+						:max="dialog.input.max"
+						:min="dialog.input.min"
+						:step="dialog.input.step"
+						:pattern="dialog.input.pattern"
+						:required="dialog.input.required"
+						:placeholder="dialog.input.placeholder"
+					)
+					.dialog-menu
+						button.nes-btn(
+							v-if="dialog.type=='confirm' || dialog.type=='prompt' && !dialog.input.required"
+							type="button"
+							@click="dialog.resolve()"
+						) Hủy
+						button.nes-btn.is-primary OK
